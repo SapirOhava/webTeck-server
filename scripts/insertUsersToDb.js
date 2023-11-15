@@ -13,11 +13,31 @@ const User = require('../api/models/User');
 
 const insertUsers = async () => {
   const users = [
-    { name: 'Sapir', birthdate: '1992-04-24', email: 'sapir@gmail.com' },
-    { name: 'Or', birthdate: '1990-11-15', email: 'or@gmail.com' },
-    { name: 'Tal', birthdate: '1992-05-05', email: 'tal@gmail.com' },
-    { name: 'Gal', birthdate: '1990-11-15', email: 'gal@gmail.com' },
-    { name: 'hadar', birthdate: '1992-11-16', email: 'hadar@gmail.com' },
+    {
+      name: 'Sapir',
+      birthday: '1992-04-24T00:00:00.000Z',
+      email: 'sapir@gmail.com',
+    },
+    {
+      name: 'Ori',
+      birthday: '1990-11-15T00:00:00.000Z',
+      email: 'ori@gmail.com',
+    },
+    {
+      name: 'Tal',
+      birthday: '1992-05-05T00:00:00.000Z',
+      email: 'tal@gmail.com',
+    },
+    {
+      name: 'Gal',
+      birthday: '1990-11-15T00:00:00.000Z',
+      email: 'gal@gmail.com',
+    },
+    {
+      name: 'hadar',
+      birthday: '1992-11-16T00:00:00.000Z',
+      email: 'hadar@gmail.com',
+    },
   ];
 
   try {
@@ -28,4 +48,7 @@ const insertUsers = async () => {
   }
 };
 
-insertUsers().then(() => mongoose.disconnect());
+insertUsers().then(() => {
+  mongoose.disconnect();
+  console.log('mongoose disconnected after seeding users script');
+});

@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('./db'); // This will establish the database connection when loaded
 const cors = require('cors');
 const port = process.env.PORT || 5000;
-const userController = require('./api/controllers/userController');
+const userRoute = require('./api/routes/user');
 
 const app = express();
 
@@ -10,7 +10,7 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
-app.use('/api/user', userController);
+app.use('/api/user', userRoute);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
