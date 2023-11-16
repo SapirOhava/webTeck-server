@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Log = require('../models/Log');
 
 exports.getUsers = async (req, res) => {
   try {
@@ -26,6 +27,23 @@ exports.getTodaysBirthdays = async (req, res) => {
     });
 
     res.status(200).json(usersWithBirthdayToday);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+exports.logBirthdayWish = async (req, res) => {
+  try {
+    const { userId, message } = req.body;
+
+    const newLogEntry = new Log({
+      userId,
+      message,
+      type: 'birthdayWishLog',
+    });
+    await newLogEntry.save();
+
+    res.status(200).json({ message: 'Birthday wish logged successfully' });
   } catch (error) {
     res.status(500).send(error.message);
   }
