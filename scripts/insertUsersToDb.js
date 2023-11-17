@@ -14,27 +14,27 @@ const User = require('../api/models/User');
 const insertUsers = async () => {
   const users = [
     {
-      name: 'Sapir',
+      username: 'Sapir',
       birthday: '1992-04-24T00:00:00.000Z',
       email: 'sapir@gmail.com',
     },
     {
-      name: 'Ori',
+      username: 'Ori',
       birthday: '1990-11-15T00:00:00.000Z',
       email: 'ori@gmail.com',
     },
     {
-      name: 'Tal',
+      username: 'Tal',
       birthday: '1992-05-05T00:00:00.000Z',
       email: 'tal@gmail.com',
     },
     {
-      name: 'Gal',
+      username: 'Gal',
       birthday: '1990-11-15T00:00:00.000Z',
       email: 'gal@gmail.com',
     },
     {
-      name: 'hadar',
+      username: 'hadar',
       birthday: '1992-11-16T00:00:00.000Z',
       email: 'hadar@gmail.com',
     },
