@@ -1,7 +1,12 @@
 const User = require('../models/User');
+const BirthdayWish = require('../models/BirthdayWish');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { logIn, sendBirthdayWish, signUp } = require('../Utility/logger');
+const {
+  logInLog,
+  sendBirthdayWishLog,
+  signUpLog,
+} = require('../Utility/logger');
 
 exports.getUsers = async (req, res) => {
   try {
@@ -14,7 +19,6 @@ exports.getUsers = async (req, res) => {
 
 exports.getTodaysBirthdays = async (req, res) => {
   try {
-    // get today's date in local time
     const today = new Date();
     const day = today.getDate();
     const month = today.getMonth() + 1; // Month is 0-indexed
@@ -34,14 +38,48 @@ exports.getTodaysBirthdays = async (req, res) => {
   }
 };
 
+exports.getBirthdayWishes = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const birthdayWishes = await BirthdayWish.find({ user: userId }).populate(
+      'sentByUsers'
+    );
+
+    res.status(200).json(birthdayWishes);
+  } catch (error) {
+    console.error('Error fetching birthday wishes:', error);
+    res.status(500).send(error.message);
+  }
+};
+
 exports.sendBirthdayWish = async (req, res) => {
   try {
-    const { userEmail, sendToEmail } = req.body;
-
-    await sendBirthdayWish(userEmail, sendToEmail);
-
-    res.status(200).json({ message: 'Birthday wish sent successfully' });
+    const userEmail = req.userData.email;
+    const { sendToEmail } = req.body;
+    let sendToUser = await User.findOne({ email: sendToEmail });
+    let senderUser = await User.findOne({ email: userEmail });
+    if (!sendToUser || !senderUser) {
+      throw new Error('user does not exist');
+    }
+    let wish = await BirthdayWish.findOne({ user: sendToUser._id });
+    if (wish && wish.sentByUsers.includes(senderUser._id)) {
+      return res.status(400).json({ message: 'Birthday wish already sent' });
+    }
+    if (!wish) {
+      wish = new BirthdayWish({
+        user: sendToUser,
+        sentByUsers: [senderUser._id],
+      });
+    } else {
+      wish.sentByUsers.push(senderUser._id);
+    }
+    await wish.save();
+    await sendBirthdayWishLog(userEmail, sendToEmail);
+    res.status(200).json({
+      message: 'Happy Birthday Wish Sent successfully ',
+    });
   } catch (error) {
+    console.error('Error adding birthday wish:', error);
     res.status(500).send(error.message);
   }
 };
@@ -64,7 +102,7 @@ exports.users_signup = async (req, res, next) => {
     });
 
     await user.save();
-    await signUp(req.body.email);
+    await signUpLog(req.body.email);
 
     res.status(200).json({
       message: 'User created successfully',
@@ -98,7 +136,7 @@ exports.users_login = async (req, res, next) => {
         }
       );
 
-      await logIn(user.email);
+      await logInLog(user.email);
       return res.status(200).json({
         message: 'Auth successful',
         token,

@@ -1,6 +1,6 @@
-const Log = require('./models/Log');
+const Log = require('../models/Log');
 
-const logIn = async (userEmail) => {
+const logInLog = async (userEmail) => {
   try {
     const log = new Log({
       type: 'loggedInLog',
@@ -12,7 +12,7 @@ const logIn = async (userEmail) => {
   }
 };
 
-const sendBirthdayWish = async (userEmail, sendToEmail) => {
+const sendBirthdayWishLog = async (userEmail, sendToEmail) => {
   try {
     const log = new Log({
       type: 'sendBirthdayWishLog',
@@ -24,7 +24,7 @@ const sendBirthdayWish = async (userEmail, sendToEmail) => {
     console.error('Error on sendBirthdayWish log:', error);
   }
 };
-const signUp = async (userEmail) => {
+const signUpLog = async (userEmail) => {
   try {
     const log = new Log({
       type: 'signupLog',
@@ -37,7 +37,7 @@ const signUp = async (userEmail) => {
 };
 
 module.exports = {
-  logIn,
-  sendBirthdayWish,
-  signUp,
+  logInLog,
+  sendBirthdayWishLog,
+  signUpLog,
 };

@@ -5,7 +5,8 @@ const checkAuth = require('../middleware/check-auth');
 
 router.get('/', checkAuth, userController.getUsers);
 router.get('/todayBirthday', checkAuth, userController.getTodaysBirthdays);
-router.post('/logBirthdayWish', checkAuth, userController.logBirthdayWish);
+router.post('/BirthdayWish', checkAuth, userController.sendBirthdayWish);
+router.get('/BirthdayWish', checkAuth, userController.getBirthdayWishes);
 
 router.post('/signup', userController.users_signup);
 router.post('/login', userController.users_login);
