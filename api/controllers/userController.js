@@ -1,7 +1,7 @@
 const User = require('../models/User');
-const Log = require('../models/Log');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { logIn, sendBirthdayWish, signUp } = require('../Utility/logger');
 
 exports.getUsers = async (req, res) => {
   try {
@@ -34,18 +34,13 @@ exports.getTodaysBirthdays = async (req, res) => {
   }
 };
 
-exports.logBirthdayWish = async (req, res) => {
+exports.sendBirthdayWish = async (req, res) => {
   try {
-    const { userId, message } = req.body;
+    const { userEmail, sendToEmail } = req.body;
 
-    const newLogEntry = new Log({
-      userId,
-      message,
-      type: 'birthdayWishLog',
-    });
-    await newLogEntry.save();
+    await sendBirthdayWish(userEmail, sendToEmail);
 
-    res.status(200).json({ message: 'Birthday wish logged successfully' });
+    res.status(200).json({ message: 'Birthday wish sent successfully' });
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -69,6 +64,7 @@ exports.users_signup = async (req, res, next) => {
     });
 
     await user.save();
+    await signUp(req.body.email);
 
     res.status(200).json({
       message: 'User created successfully',
@@ -93,13 +89,16 @@ exports.users_login = async (req, res, next) => {
       const token = jwt.sign(
         {
           email: user.email,
-          userId: user._id,
+          birthday: user.birthday,
+          username: user.username,
         },
         process.env.JWT_KEY,
         {
-          expiresIn: '1h',
+          expiresIn: '24h',
         }
       );
+
+      await logIn(user.email);
       return res.status(200).json({
         message: 'Auth successful',
         token,

@@ -1,14 +1,27 @@
 const mongoose = require('mongoose');
 
 const logSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  message: String,
-  createdAt: { type: Date, default: Date.now },
   type: {
     type: String,
-    enum: ['birthdayWishLog', 'otherLogType1', 'otherLogType2'],
     required: true,
+    enum: ['sendBirthdayWishLog', 'loggedInLog', 'loggedOutLog', 'signupLog'],
+  },
+  userEmail: {
+    type: String,
+    required: true,
+  },
+  sendToUserEmail: {
+    type: String,
+    required: function () {
+      return this.type === 'sendBirthdayWishLog';
+    },
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
-module.exports = mongoose.model('Log', logSchema);
+const Log = mongoose.model('Log', logSchema);
+
+module.exports = Log;
