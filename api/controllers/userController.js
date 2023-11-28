@@ -54,7 +54,7 @@ exports.getBirthdayWishes = async (req, res) => {
 
 exports.sendBirthdayWish = async (req, res) => {
   try {
-    const userEmail = req.userData.email;
+    const userEmail = req.user.email;
     const { sendToEmail } = req.body;
     let sendToUser = await User.findOne({ email: sendToEmail });
     let senderUser = await User.findOne({ email: userEmail });
@@ -126,6 +126,7 @@ exports.users_login = async (req, res, next) => {
     if (match) {
       const token = jwt.sign(
         {
+          id: user._id,
           email: user.email,
           birthday: user.birthday,
           username: user.username,
