@@ -82,3 +82,58 @@ exports.createPost = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.likePost = async (req, res) => {
+  const postId = req.params.postId;
+  const userId = req.user._id; // Assuming you have the user's ID from authentication
+
+  try {
+    // Find the post by ID
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).send('Post not found');
+    }
+
+    // Check if the user has already liked the post
+    const index = post.likes.indexOf(userId);
+
+    if (index === -1) {
+      // User hasn't liked the post yet, so add their like
+      post.likes.push(userId);
+    } else {
+      // User has already liked the post, so remove their like
+      post.likes.splice(index, 1);
+    }
+
+    await post.save();
+    res.status(200).json({ message: 'Like updated', likes: post.likes });
+  } catch (error) {
+    res.status(500).send('Error updating like');
+  }
+};
+
+exports.deletePost = async (req, res) => {
+  const postId = req.params.postId;
+  const userId = req.user._id;
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    // Check if the user requesting the delete is the one who created the post
+    if (post.createdBy.toString() !== userId.toString()) {
+      return res
+        .status(403)
+        .json({ message: 'Unauthorized to delete this post' });
+    }
+
+    await post.remove();
+    res.status(200).json({ message: 'Post successfully deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting post', error: error });
+  }
+};

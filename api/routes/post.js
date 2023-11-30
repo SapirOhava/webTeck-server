@@ -5,4 +5,6 @@ const checkAuth = require('../middleware/check-auth');
 
 router.post('/', checkAuth, postController.createPost);
 router.get('/user', checkAuth, postController.getUsersPosts);
+router.put('/:postId/like', checkAuth, postController.likePost);
+router.delete('/:postId', checkAuth, postController.deletePost);
 module.exports = router;
