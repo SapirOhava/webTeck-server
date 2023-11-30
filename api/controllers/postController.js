@@ -85,7 +85,7 @@ exports.createPost = async (req, res) => {
 
 exports.likePost = async (req, res) => {
   const postId = req.params.postId;
-  const userId = req.user._id; // Assuming you have the user's ID from authentication
+  const userId = req.user.id; // Assuming you have the user's ID from authentication
 
   try {
     // Find the post by ID
@@ -115,7 +115,7 @@ exports.likePost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
   const postId = req.params.postId;
-  const userId = req.user._id;
+  const userId = req.user.id;
 
   try {
     const post = await Post.findById(postId);
@@ -131,7 +131,7 @@ exports.deletePost = async (req, res) => {
         .json({ message: 'Unauthorized to delete this post' });
     }
 
-    await post.remove();
+    await post.deleteOne({ _id: postId });
     res.status(200).json({ message: 'Post successfully deleted' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting post', error: error });

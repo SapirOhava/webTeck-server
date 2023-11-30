@@ -17,6 +17,19 @@ exports.getUsers = async (req, res) => {
   }
 };
 
+exports.searchUsers = async (req, res) => {
+  try {
+    const query = req.query.name;
+    // Using a regular expression to enable case-insensitive and partial matching
+    const regex = new RegExp(query, 'i'); // 'i' for case-insensitive
+
+    const users = await User.find({ username: regex });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 exports.getTodaysBirthdays = async (req, res) => {
   try {
     const today = new Date();
