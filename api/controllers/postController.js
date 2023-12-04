@@ -4,7 +4,7 @@ const Comment = require('../models/Comment');
 
 exports.getUsersPosts = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.params.userId || req.user.id;
     const posts = await Post.find({
       associatedWith: userId,
       onModel: 'User',
@@ -85,7 +85,7 @@ exports.createPost = async (req, res) => {
 
 exports.likePost = async (req, res) => {
   const postId = req.params.postId;
-  const userId = req.user.id; // Assuming you have the user's ID from authentication
+  const userId = req.user.id;
 
   try {
     // Find the post by ID
