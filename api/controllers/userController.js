@@ -158,9 +158,6 @@ exports.users_login = async (req, res, next) => {
       const token = jwt.sign(
         {
           id: user._id,
-          email: user.email,
-          birthday: user.birthday,
-          username: user.username,
         },
         process.env.JWT_KEY,
         {
@@ -169,9 +166,19 @@ exports.users_login = async (req, res, next) => {
       );
 
       await logInLog(user.email);
+
+      // Since Mongoose models are rich objects, they can't be modified directly.
+      // However, you can convert the model instance to a regular JavaScript object and
+      // then delete the password property.
+      // .toObject() method provided by Mongoose, converts the Mongoose model instance into a plain JavaScript object.
+
+      const userObject = user.toObject();
+      delete userObject.password;
+
       return res.status(200).json({
         message: 'Auth successful',
         token,
+        user: userObject,
       });
     }
     return res.status(401).json({
