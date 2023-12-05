@@ -27,7 +27,10 @@ const userSchema = new Schema({
     required: true,
   },
   password: { type: String, required: true },
-  profilePictureURL: { type: String },
+  profilePictureURL: {
+    type: String,
+    default: 'https://sapir-app-images.s3.amazonaws.com/avatar.png',
+  },
 });
 
 const User = mongoose.model('User', userSchema);
