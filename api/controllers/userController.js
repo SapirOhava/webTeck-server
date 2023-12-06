@@ -21,15 +21,24 @@ exports.getUsers = async (req, res) => {
 
 exports.editUser = async (req, res) => {
   try {
-    const file = req.file;
-    const result = await uploadFile(file);
     const userId = req.user.id;
     const user = await User.findById(userId);
-    user.profilePictureURL = result.Location;
+
+    if (req.file) {
+      const file = req.file;
+      const result = await uploadFile(file);
+      user.profilePictureURL = result.Location;
+    }
+
+    const { username, birthday } = req.body; //later needs to add email and password checking and savings
+    if (username) user.username = username;
+    if (birthday) user.birthday = birthday;
+
     await user.save();
+
     const userObject = user.toObject();
     delete userObject.password;
-    res.status(200).json({ result, user: userObject });
+    res.status(200).json({ user: userObject });
   } catch (error) {
     res.status(500).send(error.message);
   }
